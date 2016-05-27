@@ -1,2 +1,2 @@
 # Competitive_Programming
-![alt tag]( Competitive_Programming/Readme.png )
+![alt tag](https://github.com/kautsiitd/Competitive_Programming/blob/master/Readme.png)
