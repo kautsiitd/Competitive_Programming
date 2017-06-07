@@ -1,6 +1,6 @@
 for _ in range(input()):
     s = raw_input()
-    if len(s1) < 2:
+    if len(s) < 2:
         print "NO"
     index = 0
     answer = "YES"
