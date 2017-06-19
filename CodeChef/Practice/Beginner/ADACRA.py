@@ -1,9 +1,11 @@
-for _ in range(input()):
-    s = raw_input()
+def findAnswer(last):
     answer = 0
-    last = "U"
     for c in s:
         if last != c:
             answer += 1
             last = c
-    print (answer+1)/2
+    return (answer+1)/2
+
+for _ in range(input()):
+    s = raw_input()
+    print min(findAnswer("U"), findAnswer("D"))
