@@ -1,4 +1,6 @@
 def nCr(n,r):
+    if n-r < r:
+        r = n-r
     answer = 1
     for i in range(r):
         answer*=(n-i)
