@@ -6,7 +6,6 @@ for _ in range(input()):
         if numberOfZeros < i*(i+1):
             break
         else:
-            numberOfZeros -= i*(i+1)
             bandwidth -= 1
 
     print max(0,bandwidth)
