@@ -1,7 +1,24 @@
 #include<iostream>
+#include<unordered_map>
+#include<vector>
+#include<tuple>
 
 #define ll long long
 using namespace std;
+
+struct pair_hash {
+  size_t operator () (const std::pair<int,ll> &p) const {
+    auto h1 = std::hash<int>{}(p.first);
+    auto h2 = std::hash<ll>{}(p.second);
+    return h1 ^ h2;
+  }
+};
+
+unordered_map<int, vector< pair<int,ll> > >  nodesTree;
+unordered_map< pair<int,ll>,ll,pair_hash> xorMap;
+unordered_map<int, vector<ll> >  nodeQueryPairs;
+tuple<int,int,ll> queries[100005];
+bool visited[100005];
 
 struct node {
   node* left;
@@ -87,6 +104,7 @@ node* insertValue(ll v, node* head) {
   }
   else {
     head->frq += 1;
+    head->Xor = nodeXor(head->left) ^ (head->frq%2 == 0 ? 0:head->value) ^ nodeXor(head->right);
     return head;
   }
   // update values
@@ -125,7 +143,7 @@ node* minValueNode(node* head) {
 
 node* deleteValue(ll v, node* head) {
   if (head == NULL) {
-    return NULL;
+    return head;
   }
   if (v < head->value) {
     head->left = deleteValue(v, head->left);
@@ -136,17 +154,19 @@ node* deleteValue(ll v, node* head) {
   else {
     if (head->frq > 1) {
       head->frq -= 1;
+      head->Xor = nodeXor(head->left) ^ (head->frq%2 == 0 ? 0:head->value) ^ nodeXor(head->right);
       return head;
     }
     else if (head->left == NULL || head->right == NULL) {
       node* temp = head->left ? head->left : head->right;
       if (temp == NULL) {
+        temp = head;
         head = NULL;
       }
       else {
-        head = temp;
-        free(temp);
+        *head = *temp;
       }
+      free(temp);
     }
     else {
       node* temp = minValueNode(head->right);
@@ -154,13 +174,12 @@ node* deleteValue(ll v, node* head) {
       head->right = deleteValue(temp->value, head->right);
     }
   }
-
   if (head == NULL) {
-    return head;
+    return NULL;
   }
   // updating values
   head->height = max(nodeHeight(head->left), nodeHeight(head->right)) + 1;
-  head->Xor = nodeXor(head->left) ^ head->value ^ nodeXor(head->right);
+  head->Xor = nodeXor(head->left) ^ (head->frq%2 == 0 ? 0:head->value) ^ nodeXor(head->right);
   // balancing tree
   ll balance = disBalance(head);
   // Left Left Case
@@ -169,8 +188,8 @@ node* deleteValue(ll v, node* head) {
   }
   // Left Right Case
   if (balance > 1 && disBalance(head->left) < 0) {
-      head->left =  leftRotate(head->left);
-      return rightRotate(head);
+    head->left =  leftRotate(head->left);
+    return rightRotate(head);
   }
   // Right Right Case
   if (balance < -1 && disBalance(head->right) <= 0) {
@@ -178,17 +197,17 @@ node* deleteValue(ll v, node* head) {
   }
   // Right Left Case
   if (balance < -1 && disBalance(head->right) > 0) {
-      head->right = rightRotate(head->right);
-      return leftRotate(head);
+    head->right = rightRotate(head->right);
+    return leftRotate(head);
   }
   return head;
 }
 
 void preOrder(node* head) {
     if (head != NULL) {
-        cout<<head->value<<head->height<<" ";
-        preOrder(head->left);
-        preOrder(head->right);
+      printf("(%lld %lld)\n", head->value, head->height);
+      preOrder(head->left);
+      preOrder(head->right);
     }
 }
 
@@ -197,7 +216,7 @@ void inOrder(node* head) {
     return;
   }
   inOrder(head->left);
-  cout<<head->value<<" ";
+  printf("(%lld %lld)\n", head->value, head->height);
   inOrder(head->right);
 }
 
@@ -210,7 +229,7 @@ ll findXor(ll value, node* head) {
   }
   else if (head->value < value) {
     if (head->left == NULL) {
-      return head->value ^ findXor(value, head->right);
+      return (head->frq%2 == 0 ? 0:head->value) ^ findXor(value, head->right);
     }
     else {
       return head->left->Xor ^ (head->frq%2 == 0 ? 0:head->value) ^ findXor(value, head->right);
@@ -226,31 +245,103 @@ ll findXor(ll value, node* head) {
   }
 }
 
+node* createXorMap(node* headOfBST,
+                  int currentNode) {
+    visited[currentNode] = true;
+    for (vector< pair<int,ll> >::iterator iter = nodesTree[currentNode].begin();
+        iter != nodesTree[currentNode].end();
+        ++iter) {
+          int nextNodeNumber = iter->first;
+          if (visited[nextNodeNumber]) {
+            continue;
+          }
+          ll pathValue = iter->second;
+          headOfBST = insertValue(pathValue, headOfBST);
+          for (vector<ll>::iterator queryValue = nodeQueryPairs[nextNodeNumber].begin();
+              queryValue != nodeQueryPairs[nextNodeNumber].end();
+              ++queryValue) {
+                xorMap[make_pair(nextNodeNumber,*queryValue)] = findXor(*queryValue,headOfBST);
+          }
+          headOfBST = createXorMap(headOfBST,
+                                  nextNodeNumber);
+          headOfBST = deleteValue(pathValue,headOfBST);
+    }
+    return headOfBST;
+}
+
 int main() {
-  node* head = NULL;
-  head = insertValue(7, head);
-  head = insertValue(3, head);
-  head = insertValue(8, head);
-  head = insertValue(1, head);
-  head = insertValue(5, head);
-  head = insertValue(3, head);
-  head = insertValue(2, head);
-  head = insertValue(4, head);
-  head = deleteValue(2, head);
-  head = insertValue(2, head);
-  head = insertValue(9, head);
-  head = deleteValue(4, head);
-  head = insertValue(7, head);
-  head = deleteValue(7, head);
-  head = deleteValue(9, head);
-  preOrder(head);
-  cout<<'\n';
-  inOrder(head);
-  cout<<'\n';
-  while (true) {
-    ll v;
-    cin>>v;
-    cout<<findXor(v, head);
-    cout<<'\n';
+  int t;
+  scanf("%d\n", &t);
+  for (int _ = 0; _ < t; _++) {
+    int n;
+    scanf("%d\n", &n);
+    // Constructing nodesTree for DFS;
+    for (int i = 0; i < n-1; i++) {
+      int a,b;
+      ll v;
+      scanf("%d %d %lld\n", &a, &b, &v);
+      if (nodesTree.find(a) == nodesTree.end()) {
+        vector< pair<int,ll> > pairs;
+        pairs.push_back(make_pair(b,v));
+        nodesTree[a] = pairs;
+      }
+      else {
+        nodesTree[a].push_back(make_pair(b,v));
+      }
+      if (nodesTree.find(b) == nodesTree.end()) {
+        vector< pair<int,ll> > pairs;
+        pairs.push_back(make_pair(a,v));
+        nodesTree[b] = pairs;
+      }
+      else {
+        nodesTree[b].push_back(make_pair(a,v));
+      }
+    }
+    // taking input for queries
+    int q;
+    scanf("%d\n", &q);
+    // storing query values required for various nodes
+    for (int i = 0; i < q; i++) {
+      int a,b;
+      ll v;
+      scanf("%d %d %lld\n", &a, &b, &v);
+      queries[i] = tuple<int,int,ll>(a,b,v);
+      if (nodeQueryPairs.find(a) == nodeQueryPairs.end()) {
+        vector<ll> values;
+        values.push_back(v);
+        nodeQueryPairs[a] = values;
+      }
+      else {
+        nodeQueryPairs[a].push_back(v);
+      }
+      if (nodeQueryPairs.find(b) == nodeQueryPairs.end()) {
+        vector<ll> values;
+        values.push_back(v);
+        nodeQueryPairs[b] = values;
+      }
+      else {
+        nodeQueryPairs[b].push_back(v);
+      }
+    }
+    // Creating Xor map from root to node using DFS
+    for (int i = 0; i < n+1; i++) {
+      visited[i] = false;
+    }
+    node* headOfBST = NULL;
+    headOfBST = insertValue(0, headOfBST);
+    createXorMap(headOfBST,
+                (n+1)/2);
+    // solving queries now
+    for (int i=0; i<q; i++) {
+          tuple<int,int,ll> query = queries[i];
+          int nodeA = get<0>(query);
+          int nodeB = get<1>(query);
+          ll upperValue = get<2>(query);
+          printf("%lld\n", (xorMap[make_pair(nodeA,upperValue)] ^ xorMap[make_pair(nodeB,upperValue)]));
+        }
+    nodesTree.clear();
+    xorMap.clear();
+    nodeQueryPairs.clear();
   }
+  return 0;
 }
