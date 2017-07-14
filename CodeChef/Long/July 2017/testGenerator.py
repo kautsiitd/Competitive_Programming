@@ -1,15 +1,24 @@
 import random
-t = 5
+import math
+t = 100000
 print t
+a = [2,311,13,17,19,23,29]
+for i in range(31,2480,2):
+    isPrime = True
+    upperLimit = int(math.sqrt(i))+2
+    for j in a:
+        if j>upperLimit:
+            break
+        elif i%j == 0:
+            isPrime = False
+            break
+    if isPrime:
+        a.append(i)
+l = len(a)
 for _ in range(t):
-    n = 10000
+    n = 3
     print n
-    for i in range(n-1):
-        print i+1,i+2,i+1
-
-    q = 100000
-    print q
-    for i in range(q):
-        a = random.randint(1,n-1)
-        b = random.randint(a+1,n)
-        print a,b,random.randint(1,1000000000)
+    a1 = random.randint(0,l-3)
+    a2 = random.randint(a1+1,l-2)
+    a3 = random.randint(a2+1,l-1)
+    print a[a1],a[a2],a[a3]
