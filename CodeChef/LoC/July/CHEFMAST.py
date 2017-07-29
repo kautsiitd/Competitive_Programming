@@ -2,13 +2,13 @@ numbers = '0123456789'
 dict = {}
 dict['00'] = ('0',0)
 for a in range(1,10):
-    for b in range(1,10):
+    for b in range(10):
         if a>b:
             dict[numbers[a]+numbers[b]] = (numbers[10-a+b],1)
         else:
             dict[numbers[a]+numbers[b]] = (numbers[10-a],2)
 for b in range(1, 10):
-    dict['0'+numbers[b]] = ('0', 1)
+    dict['0'+numbers[b]] = ('0',1)
 
 def minMoves(num):
     if num in dict:
