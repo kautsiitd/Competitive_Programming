@@ -33,22 +33,6 @@ struct {
   }
 } customLess;
 
-string sumIt(string a, string b) {
-  ll l1 = a.length();
-  ll l2 = b.length();
-  a += string(l2-l1,'0');
-  string ans = "";
-  ll carry = 0;
-  for(ll i=0; i<l2; i++) {
-    ans += to_string(((ll)a[i] + (ll)b[i] + carry - 96)%2);
-    carry = ((ll)a[i] + (ll)b[i] + carry - 96)/2;
-  }
-  if(carry == 1) {
-    ans += "1";
-  }
-  return ans;
-}
-
 int main() {
   std::ios::sync_with_stdio(false);
   int t;
@@ -127,10 +111,29 @@ int main() {
 
     ll numberOfShifts = shift.size();
     reverse(k.begin(),k.end());
-    string ans = string(shift[0],'0') + k;
-    for(ll i=1; i<numberOfShifts; i++) {
-      ans = sumIt(ans,string(shift[i],'0')+k);
+
+    ll kLen = k.length();
+    ll sum[kLen+shift.back()];
+    for(ll i=0; i<shift.back()+kLen; i++) {
+      sum[i] = 0;
     }
+    for(ll i=0; i<numberOfShifts; i++) {
+      for(ll j=0; j<kLen; j++) {
+        sum[shift[i]+j] += (ll)k[j]-48;
+      }
+    }
+
+    ll carry = 0;
+    string ans = "";
+    for(ll i=0; i<kLen+shift.back(); i++) {
+      ans += to_string((carry+sum[i])%2);
+      carry = (carry+sum[i])/2;
+    }
+    while(carry != 0) {
+      ans += to_string(carry%2);
+      carry /= 2;
+    }
+
     reverse(ans.begin(),ans.end());
     cout<<ans<<'\n';
   }
