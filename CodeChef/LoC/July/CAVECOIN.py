@@ -28,7 +28,7 @@ def takeInput():
     temp = raw_input()
     while(temp == ""):
         temp = raw_input()
-    return temp
+    return temp.strip()
 
 for _ in range(int(takeInput())):
     n,m = map(int,takeInput().split())
