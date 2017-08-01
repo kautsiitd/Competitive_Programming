@@ -12,7 +12,7 @@ for _ in range(t):
         b = random.randint(a,upperLimit)
         print a,b
 
-    kSize = 60
+    kSize = 100000
     k = "1"
     for i in range(1,kSize):
         k += str(random.randint(0,1))
