@@ -3,7 +3,6 @@
 #include<vector>
 #include<utility>
 #include <sstream>
-#include <stdlib.h>
 using namespace std;
 #define ll long long
 
@@ -32,6 +31,20 @@ struct {
     }
   }
 } customLess;
+
+
+
+vector<ll> hist(vector<ll> X) {
+  vector<ll> h;
+  ll limit = *max_element(X.begin(), X.end());
+  for(ll i=0; i<limit+1; i++) {
+    h.push_back(0);
+  }
+  for(auto x:X) {
+    h[x] += 1;
+  }
+  return h;
+}
 
 int main() {
   std::ios::sync_with_stdio(false);
@@ -113,15 +126,14 @@ int main() {
     reverse(k.begin(),k.end());
 
     ll kLen = k.length();
-    ll sum[kLen+shift.back()];
-    for(ll i=0; i<shift.back()+kLen; i++) {
-      sum[i] = 0;
-    }
-    for(ll i=0; i<numberOfShifts; i++) {
-      for(ll j=0; j<kLen; j++) {
-        sum[shift[i]+j] += (ll)k[j]-48;
+    vector<ll> onePos;
+    for(int i=0; i<kLen; i++) {
+      if(k[i] == '1') {
+        onePos.push_back(i);
       }
     }
+
+    vector<ll> sum = conv(histShift,histOnePos);
 
     ll carry = 0;
     string ans = "";
