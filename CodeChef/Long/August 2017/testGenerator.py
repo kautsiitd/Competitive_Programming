@@ -1,11 +1,13 @@
 import random
-t = 100
+t = 50
 print t
-upperLimitNum = 4
-upperLimitN = 8
+upperLimitNum = 50
+upperLimitN = 50
 for _ in range(t):
-    n = random.randint(1,upperLimitN)
+    n = 50
+    # n = random.randint(1,upperLimitN)
     print n
     for __ in range(n):
-        print random.randint(0,upperLimitNum),
+        print 50,
+        # print random.randint(0,upperLimitNum),
     print ""
