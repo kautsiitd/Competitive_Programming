@@ -29,24 +29,43 @@ for _ in range(input()):
         print -1
         continue
 
-    numNotLie = []
-    for i in range(1,n+1):
-        numNotLie.append([newEdges[i][0]+1,i-1])
+    criticalPoints = []
+    tempI = 1
+    for i in newEdges[1:-1]:
+        if i and i[-1] == tempI-1:
+            criticalPoints.append(i[0])
+        else:
+            canExists = False
+            break
+        tempI += 1
 
-    ans = [0]
-    print newEdges
-    print numNotLie
-    for notLieRange in numNotLie:
-        if notLieRange[0]>notLieRange[1]:
-            ans.append(1)
-            continue
-        num = 1
-        temp = ans[notLieRange[0]:notLieRange[1]+1]
-        print temp
-        while num in temp:
-            num += 1
-        ans.append(num)
+    if not(canExists):
+        print -1
+        continue
 
-    for i in ans[1:]:
-        print i,
-    print ""
+    lastIndex = [-1 for i in range(100005)]
+    ans = [1]
+    lastIndex[ans[0]] = 0
+
+    for i in range(1,n):
+        if criticalPoints[i] == 0:
+            num = 1
+            while lastIndex[num] != -1:
+                num += 1
+            ans.append(num)
+            lastIndex[num] = i
+        else:
+            num = ans[criticalPoints[i]-1]
+            if lastIndex[num] >= criticalPoints[i]:
+                canExists = False
+                break
+            else:
+                ans.append(num)
+                lastIndex[num] = i
+
+    if canExists:
+        for i in ans:
+            print i,
+        print ""
+    else:
+        print -1
