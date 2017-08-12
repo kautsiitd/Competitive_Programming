@@ -1,5 +1,4 @@
 python testGenerator.py > test
-time python CHEFFA.py < test > 1.out
-g++ CHEFFA.cpp
-time ./a.out < test > 2.out
-diff 1.out 2.out
+g++ FLOWERPO.cpp -std=c++14
+time ./a.out < test
+time python FLOWERPO1.py < test
