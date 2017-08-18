@@ -10,7 +10,7 @@ int n,q;
 struct node {
   ll lower,upper,value;
   node *right, *left;
-};
+}*segmentTreeRoot;
 
 node* buildSegmentTree(ll lower, ll upper) {
   node* root = new node();
@@ -38,7 +38,8 @@ void updateTree(node* root, ll lower, ll upper, ll value) {
   }
 }
 
-ll getValue(node* root, int index) {
+ll getValue(int index) {
+  node* root = segmentTreeRoot;
   ll value = 0;
   while(root->upper != root->lower) {
     value += root->value;
@@ -102,23 +103,45 @@ void calculateAnsArray(ll a[], ll size) {
       }
     }
   }
-  rep(i,size) {
+}
+
+// This function looks little faulty
+void updateAnsArray(ll terminatingPoint) {
+  ll lower = max(terminatingPoint - 101,(ll)1);
+  ll upper = min(terminatingPoint + 101,(ll)n);
+  stack<ll> s;
+  s.push(lower);
+  int index = lower+1;
+  ll next;
+  while(index<upper) {
+    next = getValue(index);
+    while(!s.empty() && next > getValue(s.top())) {
+      if(s.top() <= terminatingPoint) {
+        ans[s.top()-1][0] = index-1;
+      }
+      s.pop();
+    }
+    s.push(index);
+    index += 1;
+  }
+  while(!s.empty()) {
+    if(s.top() <= terminatingPoint) {
+      ans[s.top()-1][0] = -1;
+    }
+    s.pop();
+  }
+  rep(i,n) {
     rep(j,20) printf("%d ",ans[i][j]);
     cout<<'\n';
   }
-}
-
-void updateAnsArray(ll terminatingPoint) {
-  ll lower = max(terminatingPoint - 100,1);
-  ll upper = min(terminatingPoint + 100,n);
-  ll b[]
+  cout<<'\n';
 }
 
 int main() {
   scanf("%d %d\n", &n, &q);
   ll a[n];
   rep(i,n) scanf("%lld\n", &a[i]);
-  node* segmentTreeRoot = buildSegmentTree(1,n);
+  segmentTreeRoot = buildSegmentTree(1,n);
   calculateAnsArray(a,n);
 
   rep(i,q) {
@@ -134,6 +157,7 @@ int main() {
       scanf("%lld %lld %lld\n", &left, &right, &value);
       updateTree(segmentTreeRoot, left, right, value);
       updateAnsArray(right);
+      updateAnsArray(left);
     }
   }
   return 0;
