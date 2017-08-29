@@ -1,15 +1,8 @@
 import math
 
 mod = 1000000007
-def divisors(n):
-    divs = []
-    for i in range(1,int(math.sqrt(n))+1):
-        if n%i == 0:
-            if n/i == i:
-                divs.append(i)
-            else:
-                divs.extend([i,n/i])
-    return divs
+
+divisors = [[]]+[[j for j in range(i,100001,i)] for i in range(1,100001)]
 
 for _ in range(input()):
     n,Q = map(int,raw_input().split())
@@ -31,8 +24,10 @@ for _ in range(input()):
             oldNum = a[index-1]
             newNum = q[2]
             a[index-1] = newNum
-            affectedPos = divisors(index)
+            affectedPos = divisors[index]
             for pos in affectedPos:
+                if pos > n:
+                    break
                 ans[pos] -= oldNum*oldNum
                 ans[pos] += newNum*newNum
                 ans[pos] %= mod
