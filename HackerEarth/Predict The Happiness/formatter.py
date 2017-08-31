@@ -25,3 +25,24 @@ with open('Given_Data/train.csv') as f:
     count += 1
     singleData = ""
 g.close()
+
+g = open('Formatted_Data/test.csv', 'w')
+count = 0
+with open('Given_Data/test.csv') as f:
+    singleData = ""
+    current = 80134
+    for line in f.readlines():
+        line = line[:-1]
+        if line.split(",",1)[0][2:] == str(current+count):
+            count += 1
+            if singleData != "":
+                dataParts = singleData.split(",")
+                singleData = "".join(dataParts[1:-2]).strip("\"")
+                g.write(singleData+'\n')
+            singleData = line
+        else:
+            singleData += " "+line
+    g.write(singleData)
+    count += 1
+    singleData = ""
+g.close()

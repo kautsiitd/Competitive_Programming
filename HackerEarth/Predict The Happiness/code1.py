@@ -50,9 +50,10 @@ with open('pickle/training_parameter_logis.pickle', 'wb') as f:
 	pickle.dump(logis, f)
 
 # testing tweets
-test_tweets 	= [x[1].decode("utf8","replace") for x in content[int(.9*l):]]
+testPortion = 0.8
+test_tweets 	= [x[1].decode("utf8","replace") for x in content[int(testPortion*l):]]
 # test_tweets     = [process_tweet(x[1]).decode("utf8","replace") for x in content[int(.9*l):]]
-test_sentiments = [int(x[0][1:-1]) for x in content[int(.9*l):]]
+test_sentiments = [int(x[0][1:-1]) for x in content[int(testPortion*l):]]
 # testing
 x_test = V.transform(test_tweets)
 y_test = test_sentiments

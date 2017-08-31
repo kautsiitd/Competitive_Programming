@@ -1,1 +1,3 @@
-python code2.py $1 $2
+python formatter.py
+python code1.py
+python code2.py Formatted_Data/test.csv ans.csv

@@ -21,11 +21,11 @@ def process_tweet(tweet):
 	tweet = [e for e in tweet if (len(e) >= 4 and e not in stop_words)]
 	return tweet
 
-with open('training_parameter_V.pickle', 'rb') as f:
+with open('pickle/training_parameter_V.pickle', 'rb') as f:
 	V = pickle.load(f)
 print 1
 
-with open('training_parameter_logis.pickle', 'rb') as f:
+with open('pickle/training_parameter_logis.pickle', 'rb') as f:
 	logis = pickle.load(f)
 print 2
 
@@ -42,7 +42,19 @@ x_test = V.transform(test_tweets)
 z = logis.predict(x_test)
 print 5
 f = open(str(sys.argv[2]), 'w')
+f.write("User_ID, Is_Response\n")
+idNumber = 80132
 for x in z:
-	f.write(str(x))
+	if x == 0:
+		sentiment = "not_happy"
+	else:
+		sentiment = "happy"
+	if idNumber == 100000:
+		f.write("id1e+05,"+sentiment)
+	else:
+		f.write("id"+str(idNumber)+","+sentiment)
 	f.write('\n')
-f.close()	
+	idNumber += 1
+f.write("id109535,happy")
+f.close()
+print idNumber
