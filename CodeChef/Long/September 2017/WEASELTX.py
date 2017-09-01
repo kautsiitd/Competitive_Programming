@@ -13,21 +13,21 @@ def dfs(current,parent,currentDepth):
             depth[child] = currentDepth+1
             dfs(child,current,currentDepth+1)
 dfs(0,-1,0)
+maxDepth = max(depth)
 
-evenDepthXor = 0
-oddDepthXor = 0
-for i in range(1,n):
-    if depth[i]%2 == 0:
-        evenDepthXor ^= values[i]
-    else:
-        oddDepthXor ^= values[i]
-for _ in range(q):
-    delta = input()
-    if(delta%4 == 0):
-        print values[0]
-    elif(delta%4 == 1):
-        print values[0]^evenDepthXor^oddDepthXor
-    elif(delta%4 == 2):
-        print values[0]^evenDepthXor
-    elif(delta%4 == 3):
-        print values[0]^oddDepthXor
+queries = [input() for i in range(q)]
+maxDelta = max(queries)
+
+matrix = [[1] for i in range(maxDelta+1)]
+for _ in range(maxDepth):
+    matrix[0].append(1)
+for i in range(1,maxDelta+1):
+    for j in range(1,maxDepth+1):
+        matrix[i].append(matrix[i-1][j]^matrix[i][j-1])
+
+for delta in queries:
+    ans = values[0]
+    for i in range(1,n):
+        if matrix[delta-1][depth[i]] == 1:
+            ans ^= values[i]
+    print ans
