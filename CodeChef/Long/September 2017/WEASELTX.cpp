@@ -15,11 +15,7 @@ void dfs(int current, int parent, int currentDepth) {
   }
 }
 
-ull numberOfTwosInFactorialStorage[1000005];
 ull numberOfTwosInFactorial(ull num) {
-  if(num<1000) {
-    return numberOfTwosInFactorialStorage[num];
-  }
   ull temp = 2;
   ull ans = 0;
   while(temp <= num) {
@@ -29,21 +25,19 @@ ull numberOfTwosInFactorial(ull num) {
   return ans;
 }
 
-ull priorCompu(ull num) {
-  ull temp = 2;
-  ull ans = 0;
-  while(temp <= num) {
-    ans += num/temp;
-    temp *= 2;
+int f(ull i, ull j) {
+  ull k1 = numberOfTwosInFactorial(i+j);
+  ull k2 = numberOfTwosInFactorial(i);
+  ull k3 = numberOfTwosInFactorial(j);
+  if(k1<=k2+k3) {
+    return 1;
   }
-  return ans;
+  else {
+    return 0;
+  }
 }
 
 int main() {
-  rep(i,0,1000005) {
-    numberOfTwosInFactorialStorage[i] = priorCompu(i);
-  }
-  return 0;
   int n,q;
   scanf("%d %d\n", &n, &q);
   rep(_,0,n) {
@@ -62,6 +56,15 @@ int main() {
   scanf("%llu\n", &values[n-1]);
 
   dfs(0,-1,0);
+  int maxDepth = *max_element(depth,depth+n);
+  ull xorAtDepth[maxDepth+1];
+  rep(i,0,maxDepth+1) {
+    xorAtDepth[i] = 0;
+  }
+  rep(i,1,n) {
+    xorAtDepth[depth[i]] ^= values[i];
+  }
+
   rep(_,0,q) {
     ull delta;
     scanf("%llu\n", &delta);
@@ -70,15 +73,13 @@ int main() {
       printf("%llu\n", ans);
       continue;
     }
-    rep(i,1,n) {
-      ull k1 = numberOfTwosInFactorial(delta-1+depth[i]);
-      ull k2 = numberOfTwosInFactorial(depth[i]);
-      ull k3 = numberOfTwosInFactorial(delta-1);
-      if(k1<=k2+k3) {
-        ans ^= values[i];
+    rep(i,0,maxDepth+1) {
+      if(f(delta-1,i) == 1) {
+        ans ^= xorAtDepth[i];
       }
     }
     printf("%llu\n", ans);
   }
+  cout<<'\n';
   return 0;
 }
