@@ -1,37 +1,32 @@
-class ansStruct:
-    def __init__(self,ans,leftMin,leftMinLen,rightMin,rightMinLen):
-        self.ans = ans
-        self.leftMin = leftMin
-        self.leftMinLen = leftMinLen
-        self.rightMin = rightMin
-        self.rightMinLen = rightMinLen
+# Used standard solution for subtask 1 from http://www.geeksforgeeks.org/largest-rectangle-under-histogram/
 
-def solve(l,r):
-    global temp
-    if l == r:
-        return ansStruct(temp[l]*(r-l+1),temp[l],1,temp[l],1)
-    else:
-        mid = (l+r)/2
-        ansl = solve(l,mid)
-        lenl = mid-l+1
-        ansr = solve(mid+1,r)
-        lenr = r-mid
-        ans = ansStruct(-1,-1,-1,-1,-1)
-        ans.leftMin = ansl.leftMin
-        ans.rightMin = ansr.rightMin
-        if lenl == ansl.leftMinLen and ansl.leftMin == ansr.leftMin:
-            ans.leftMinLen = ansl.leftMinLen + ansr.leftMinLen
+def solve(tempA,n):
+    s = []
+    max_area = 0
+    i = 0
+    while i<n:
+        if not(s) or tempA[s[-1]]<=tempA[i]:
+            s.append(i)
+            i+=1
         else:
-            ans.leftMinLen = ansl.leftMinLen
-        if lenr == ansr.rightMinLen and ansl.rightMin == ansr.rightMin:
-            ans.rightMinLen = ansl.rightMinLen + ansr.rightMinLen
+            tp = s[-1]
+            s.pop()
+            if not(s):
+                area_with_top = tempA[tp]*i
+            else:
+                area_with_top = tempA[tp]*(i-s[-1]-1)
+            if max_area < area_with_top:
+                max_area = area_with_top
+    while s:
+        tp = s[-1]
+        s.pop()
+        if not(s):
+            area_with_top = tempA[tp]*i
         else:
-            ans.rightMinLen = ansr.rightMinLen
-        newPossibleAns = 0
-        if ansl.rightMin == ansr.leftMin:
-            newPossibleAns = ansl.rightMin*(ansl.rightMinLen+ansr.leftMinLen)
-        ans.ans = max(ansl.ans,ansr.ans,newPossibleAns)
-        return ans
+            area_with_top = tempA[tp]*(i-s[-1]-1)
+        if max_area < area_with_top:
+            max_area = area_with_top
+    return max_area
 
 for _ in range(input()):
     n,k = map(int,raw_input().split())
@@ -46,6 +41,6 @@ for _ in range(input()):
             temp.append(a[i])
             i += 1
         if temp != []:
-            ans = max(ans, solve(0,len(temp)-1).ans)
+            ans = max(ans, solve(temp,len(temp)))
             temp = []
     print ans
