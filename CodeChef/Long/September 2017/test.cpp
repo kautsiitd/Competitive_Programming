@@ -2,6 +2,7 @@
 using namespace std;
 #define ull unsigned long long
 #define rep(i,s,e) for(int i=s;i<e;i++)
+#define repi(i,s,e) for(int i=s;i>e;i--)
 
 ull numberOfTwosInFactorial(ull num) {
   ull temp = 2;
@@ -26,11 +27,32 @@ int f(ull i, ull j) {
 }
 
 int main() {
-  rep(i,0,40) {
-    rep(j,0,40) {
-      cout<<f(i,j)<<" ";
+  int n = 9;
+  int a[2*n][n];
+  rep(i,0,n) {
+    cout<<i+1<<"\n";
+    rep(j,0,n-1) {
+      a[i][j] = f(i,j);
+      cout<<a[i][j]<<" ";
     }
+    ull temp = 0;
+    ull mul = 1;
+    repi(j,n-2,0) {
+      temp += a[i][j]*mul;
+      mul *= 2;
+    }
+    cout<<temp;
     cout<<'\n';
   }
+  // rep(j,0,n) {
+  //   cout<<a[5][j]<<" ";
+  // }
+  // cout<<'\n';
+  // cout<<'\n';
+  //
+  // rep(j,0,n) {
+  //   cout<<(a[2][j]^a[4][j]^a[8][j])<<" ";
+  // }
+  // cout<<'\n';
   return 0;
 }
