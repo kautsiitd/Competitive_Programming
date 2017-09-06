@@ -114,7 +114,7 @@ for _ in range(input()):
             setVariables3()
             TwoEdgeUsingThreeNodesAns = (6*TwoEdgeUsingThreeNodesAns)%mod
             TwoEdgeUsingFourNodesAns = (6*TwoEdgeUsingFourNodesAns)%mod
-            # print singleEdgeAns,commonNodeTwoEdgesAns,noCommonNodeTwoEdgesAns,ThreeEdgeUsingThreeNodesAns,ThreeEdgeUsingFourNodesAns,ThreeEdgeUsingFiveNodesAns,ThreeEdgeUsingSixNodesAns
+            # print OneEdgeUsingTwoNodesAns,TwoEdgeUsingThreeNodesAns,TwoEdgeUsingFourNodesAns,ThreeEdgeUsingThreeNodesAns,ThreeEdgeUsingFourNodesAns,ThreeEdgeUsingFiveNodesAns,ThreeEdgeUsingSixNodesAns
             print (OneEdgeUsingTwoNodesAns+TwoEdgeUsingThreeNodesAns+TwoEdgeUsingFourNodesAns+ThreeEdgeUsingThreeNodesAns+ThreeEdgeUsingFourNodesAns+ThreeEdgeUsingFiveNodesAns+ThreeEdgeUsingSixNodesAns)%mod
         else:
             sys.exit()
