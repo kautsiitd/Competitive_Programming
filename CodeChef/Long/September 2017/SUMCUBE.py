@@ -7,6 +7,21 @@ powTwo = [1]
 for _ in range(100005):
     powTwo.append((powTwo[-1]*2)%mod)
 
+def setVariables1():
+    global OneEdgeUsingTwoNodes
+    global OneEdgeUsingTwoNodesAns
+    OneEdgeUsingTwoNodes = e
+    OneEdgeUsingTwoNodesAns = powTwo[v-2]*OneEdgeUsingTwoNodes
+
+def setVariables2():
+    global TwoEdgeUsingThreeNodes,TwoEdgeUsingFourNodes
+    global TwoEdgeUsingThreeNodesAns,TwoEdgeUsingFourNodesAns
+    TwoEdgeUsingThreeNodes = sum([(i*(i-1))/2 for i in edgeFrom[1:]])
+    TwoEdgeUsingThreeNodesAns = powTwo[v-3]*TwoEdgeUsingThreeNodes
+    if e>=4:
+        TwoEdgeUsingFourNodes = (e*(e-1))/2 - TwoEdgeUsingThreeNodes
+        TwoEdgeUsingFourNodesAns = powTwo[v-4]*TwoEdgeUsingFourNodes
+
 def setVariables3():
     global ThreeEdgeUsingThreeNodes,ThreeEdgeUsingFourNodes,ThreeEdgeUsingFiveNodes,ThreeEdgeUsingSixNodes
     global ThreeEdgeUsingThreeNodesAns,ThreeEdgeUsingFourNodesAns,ThreeEdgeUsingFiveNodesAns,ThreeEdgeUsingSixNodesAns
@@ -62,16 +77,14 @@ for _ in range(input()):
         print 1
     else:
         # One Edge in expansion
-        singleEdgeAns = (powTwo[v-2]*e)%mod
+        OneEdgeUsingTwoNodes = 0
         # Two Edges in expansion
             # using 3 nodes
-        commonNodeEdgePairs = sum([(i*(i-1))/2 for i in edgeFrom[1:]])
-        commonNodeTwoEdgesAns = powTwo[v-3]*commonNodeEdgePairs
+        TwoEdgeUsingThreeNodes = 0
+        TwoEdgeUsingThreeNodesAns = 0
             # using 4 nodes
-        noCommonNodeTwoEdgesAns = 0
-        if e>=4:
-            noCommonNodeEdgePairs = (e*(e-1))/2 - commonNodeEdgePairs
-            noCommonNodeTwoEdgesAns = powTwo[v-4]*noCommonNodeEdgePairs
+        TwoEdgeUsingFourNodes = 0
+        TwoEdgeUsingFourNodesAns = 0
         # Three Edges in expansion
             # using 3 nodes
         ThreeEdgeUsingThreeNodes = 0
@@ -87,16 +100,21 @@ for _ in range(input()):
         ThreeEdgeUsingSixNodesAns = 0
 
         if k == 1:
-            print singleEdgeAns
+            setVariables1()
+            print (OneEdgeUsingTwoNodesAns)%mod
         elif k == 2:
-            commonNodeTwoEdgesAns = (2*commonNodeTwoEdgesAns)%mod
-            noCommonNodeTwoEdgesAns = (2*noCommonNodeTwoEdgesAns)%mod
-            print (singleEdgeAns+commonNodeTwoEdgesAns+noCommonNodeTwoEdgesAns)%mod
+            setVariables1()
+            setVariables2()
+            TwoEdgeUsingThreeNodesAns = (2*TwoEdgeUsingThreeNodesAns)%mod
+            TwoEdgeUsingFourNodesAns = (2*TwoEdgeUsingFourNodesAns)%mod
+            print (OneEdgeUsingTwoNodesAns+TwoEdgeUsingThreeNodesAns+TwoEdgeUsingFourNodesAns)%mod
         elif k == 3 and v<=300:
+            setVariables1()
+            setVariables2()
             setVariables3()
-            commonNodeTwoEdgesAns = (6*commonNodeTwoEdgesAns)%mod
-            noCommonNodeTwoEdgesAns = (6*noCommonNodeTwoEdgesAns)%mod
+            TwoEdgeUsingThreeNodesAns = (6*TwoEdgeUsingThreeNodesAns)%mod
+            TwoEdgeUsingFourNodesAns = (6*TwoEdgeUsingFourNodesAns)%mod
             # print singleEdgeAns,commonNodeTwoEdgesAns,noCommonNodeTwoEdgesAns,ThreeEdgeUsingThreeNodesAns,ThreeEdgeUsingFourNodesAns,ThreeEdgeUsingFiveNodesAns,ThreeEdgeUsingSixNodesAns
-            print (singleEdgeAns+commonNodeTwoEdgesAns+noCommonNodeTwoEdgesAns+ThreeEdgeUsingThreeNodesAns+ThreeEdgeUsingFourNodesAns+ThreeEdgeUsingFiveNodesAns+ThreeEdgeUsingSixNodesAns)%mod
+            print (OneEdgeUsingTwoNodesAns+TwoEdgeUsingThreeNodesAns+TwoEdgeUsingFourNodesAns+ThreeEdgeUsingThreeNodesAns+ThreeEdgeUsingFourNodesAns+ThreeEdgeUsingFiveNodesAns+ThreeEdgeUsingSixNodesAns)%mod
         else:
             sys.exit()
