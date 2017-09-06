@@ -16,7 +16,9 @@ def setVariables1():
 def setVariables2():
     global TwoEdgeUsingThreeNodes,TwoEdgeUsingFourNodes
     global TwoEdgeUsingThreeNodesAns,TwoEdgeUsingFourNodesAns
-    TwoEdgeUsingThreeNodes = sum([(i*(i-1))/2 for i in edgeFrom[1:]])
+    for i in edgeFrom[1:]:
+        if(i>=2):
+            TwoEdgeUsingThreeNodes += (i*(i-1))/2
     TwoEdgeUsingThreeNodesAns = powTwo[v-3]*TwoEdgeUsingThreeNodes
     if e>=4:
         TwoEdgeUsingFourNodes = (e*(e-1))/2 - TwoEdgeUsingThreeNodes
@@ -25,22 +27,38 @@ def setVariables2():
 def setVariables3():
     global ThreeEdgeUsingThreeNodes,ThreeEdgeUsingFourNodes,ThreeEdgeUsingFiveNodes,ThreeEdgeUsingSixNodes
     global ThreeEdgeUsingThreeNodesAns,ThreeEdgeUsingFourNodesAns,ThreeEdgeUsingFiveNodesAns,ThreeEdgeUsingSixNodesAns
-    for triplet in combinations(allEdges,3):
-        elements = []
-        for i in triplet:
-            for j in i:
-                elements.append(j)
-        elements = list(set(elements))
-        l = len(elements)
-        # print triplet,l
-        if l == 3:
-            ThreeEdgeUsingThreeNodes += 1
-        elif l == 4:
-            ThreeEdgeUsingFourNodes += 1
-        elif l == 5:
-            ThreeEdgeUsingFiveNodes += 1
-        else:
-            ThreeEdgeUsingSixNodes += 1
+    for a in range(1,v+1):
+        edgesFromA = edgeFrom[a]
+        # For 4 Nodes
+        if(edgesFromA >= 3):
+            ThreeEdgeUsingFourNodes += (edgesFromA*(edgesFromA-1)*(edgesFromA-2))/6
+        # Dependency on connected nodes b and c
+        for i in range(edgesFromA):
+            b = graph[a][i]
+            for j in range(i+1,edgesFromA):
+                c = graph[a][j]
+                # For 3 Nodes
+                if((b,c) in graphDict):
+                    ThreeEdgeUsingThreeNodes += 1
+                    ThreeEdgeUsingFiveNodes += 1    # Because of connection between b&c
+                # For 5 Nodes
+                ThreeEdgeUsingFiveNodes += e-edgeFrom[a]-edgeFrom[b]-edgeFrom[c]+2
+    ThreeEdgeUsingThreeNodes /= 3
+    # For 4 Nodes Straight Lines
+    temp = 0
+    for a in range(1,v+1):
+        edgesFromA = edgeFrom[a]
+        for i in range(edgesFromA):
+            b = graph[a][i]
+            for j in range(edgeFrom[b]):
+                c = graph[b][j]
+                if c == a:
+                    continue
+                temp += edgeFrom[c]-1
+                if (a,c) in graphDict:
+                    temp -= 1
+    ThreeEdgeUsingFourNodes += temp/2
+    ThreeEdgeUsingSixNodes = (e*(e-1)*(e-2))/6 - (ThreeEdgeUsingThreeNodes+ThreeEdgeUsingFourNodes+ThreeEdgeUsingFiveNodes)
     # print ThreeEdgeUsingThreeNodes,ThreeEdgeUsingFourNodes,ThreeEdgeUsingFiveNodes,ThreeEdgeUsingSixNodes
     if v>=3:
         ThreeEdgeUsingThreeNodesAns = (6*powTwo[v-3]*ThreeEdgeUsingThreeNodes)%mod
@@ -64,6 +82,7 @@ for _ in range(input()):
     graph = [[] for __ in range(v+1)]
     edgeFrom = [0 for i in range(v+1)]
     allEdges = []
+    graphDict = {}
     for __ in range(e):
         a,b = map(int,raw_input().split())
         graph[a].append(b)
@@ -71,6 +90,10 @@ for _ in range(input()):
         edgeFrom[a] += 1
         edgeFrom[b] += 1
         allEdges.append([a,b])
+        graphDict[(a,b)] = True
+        graphDict[(b,a)] = True
+    for i in range(1,v+1):
+        graph[i].sort()
     if v == 1 or e == 0:
         print 0
     elif v == 2:
@@ -108,7 +131,7 @@ for _ in range(input()):
             TwoEdgeUsingThreeNodesAns = (2*TwoEdgeUsingThreeNodesAns)%mod
             TwoEdgeUsingFourNodesAns = (2*TwoEdgeUsingFourNodesAns)%mod
             print (OneEdgeUsingTwoNodesAns+TwoEdgeUsingThreeNodesAns+TwoEdgeUsingFourNodesAns)%mod
-        elif k == 3 and v<=300:
+        elif k == 3 and v<=3000:
             setVariables1()
             setVariables2()
             setVariables3()
