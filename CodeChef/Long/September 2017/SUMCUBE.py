@@ -59,7 +59,7 @@ def setVariables3():
                     temp -= 1
     ThreeEdgeUsingFourNodes += temp/2
     ThreeEdgeUsingSixNodes = (e*(e-1)*(e-2))/6 - (ThreeEdgeUsingThreeNodes+ThreeEdgeUsingFourNodes+ThreeEdgeUsingFiveNodes)
-    # print ThreeEdgeUsingThreeNodes,ThreeEdgeUsingFourNodes,ThreeEdgeUsingFiveNodes,ThreeEdgeUsingSixNodes
+    print ThreeEdgeUsingThreeNodes,ThreeEdgeUsingFourNodes,ThreeEdgeUsingFiveNodes,ThreeEdgeUsingSixNodes
     if v>=3:
         ThreeEdgeUsingThreeNodesAns = (6*powTwo[v-3]*ThreeEdgeUsingThreeNodes)%mod
     if v>=4:
@@ -69,19 +69,10 @@ def setVariables3():
     if v>=6:
         ThreeEdgeUsingSixNodesAns = (6*powTwo[v-6]*ThreeEdgeUsingSixNodes)%mod
 
-def customPow(a,b):
-    ans = 1
-    while b != 0:
-        ans *= a
-        ans %= mod
-        b-=1
-    return ans
-
 for _ in range(input()):
     v,e,k = map(int,raw_input().split())
     graph = [[] for __ in range(v+1)]
     edgeFrom = [0 for i in range(v+1)]
-    allEdges = []
     graphDict = {}
     for __ in range(e):
         a,b = map(int,raw_input().split())
@@ -89,11 +80,8 @@ for _ in range(input()):
         graph[b].append(a)
         edgeFrom[a] += 1
         edgeFrom[b] += 1
-        allEdges.append([a,b])
         graphDict[(a,b)] = True
         graphDict[(b,a)] = True
-    for i in range(1,v+1):
-        graph[i].sort()
     if v == 1 or e == 0:
         print 0
     elif v == 2:
@@ -131,7 +119,7 @@ for _ in range(input()):
             TwoEdgeUsingThreeNodesAns = (2*TwoEdgeUsingThreeNodesAns)%mod
             TwoEdgeUsingFourNodesAns = (2*TwoEdgeUsingFourNodesAns)%mod
             print (OneEdgeUsingTwoNodesAns+TwoEdgeUsingThreeNodesAns+TwoEdgeUsingFourNodesAns)%mod
-        elif k == 3 and v<=3000:
+        else:
             setVariables1()
             setVariables2()
             setVariables3()
@@ -139,5 +127,3 @@ for _ in range(input()):
             TwoEdgeUsingFourNodesAns = (6*TwoEdgeUsingFourNodesAns)%mod
             # print OneEdgeUsingTwoNodesAns,TwoEdgeUsingThreeNodesAns,TwoEdgeUsingFourNodesAns,ThreeEdgeUsingThreeNodesAns,ThreeEdgeUsingFourNodesAns,ThreeEdgeUsingFiveNodesAns,ThreeEdgeUsingSixNodesAns
             print (OneEdgeUsingTwoNodesAns+TwoEdgeUsingThreeNodesAns+TwoEdgeUsingFourNodesAns+ThreeEdgeUsingThreeNodesAns+ThreeEdgeUsingFourNodesAns+ThreeEdgeUsingFiveNodesAns+ThreeEdgeUsingSixNodesAns)%mod
-        else:
-            sys.exit()
