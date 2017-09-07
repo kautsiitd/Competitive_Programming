@@ -2,16 +2,16 @@
 using namespace std;
 #define ll long long
 #define ull unsigned long long
-#define rep(i,s,e) for(int i=s; i<e; i++)
+#define rep(i,s,e) for(ll i=s; i<e; i++)
 #define pb push_back
 #define mp make_pair
 #define mod 1000000007
 
 ll powTwo[100005];
-vector< vector<int> > graph(100005);
-int edgeFrom[100005];
-map<pair<int,int>,bool> graphDict;
-int v,e,k;
+vector< vector<ll> > graph(100005);
+ll edgeFrom[100005];
+map<pair<ll,ll>,bool> graphDict;
+ll v,e,k;
 
 // Variables
 // One Edge in expansion
@@ -37,12 +37,12 @@ ll ThreeEdgeUsingFiveNodesAns = 0;
     // using 6 nodes
 ll ThreeEdgeUsingSixNodes = 0;
 ll ThreeEdgeUsingSixNodesAns = 0;
-void resetVaribles() {
-  rep(i,0,100005) {
-    graph[i] = vector<int>();
+void resetVaribles(ll v) {
+  rep(i,0,v+5) {
+    graph[i] = vector<ll>();
     edgeFrom[i] = 0;
   }
-  graphDict = map<pair<int,int>,bool>();
+  graphDict = map<pair<ll,ll>,bool>();
   OneEdgeUsingTwoNodes = 0;
   TwoEdgeUsingThreeNodes = 0;
   TwoEdgeUsingThreeNodesAns = 0;
@@ -64,12 +64,13 @@ void setVariables1() {
 }
 
 void setVariables2() {
-  for(auto i: edgeFrom) {
+  rep(z,1,v+1) {
+    ll i = edgeFrom[z];
     if(i==0) continue;
     else if(i>=2) TwoEdgeUsingThreeNodes += (i*(i-1))/2;
   }
   TwoEdgeUsingThreeNodesAns = (powTwo[v-3]*TwoEdgeUsingThreeNodes)%mod;
-  if(e>=4) {
+  if(v>=4) {
     TwoEdgeUsingFourNodes = (e*(e-1))/2 - TwoEdgeUsingThreeNodes;
     TwoEdgeUsingFourNodesAns = (powTwo[v-4]*TwoEdgeUsingFourNodes)%mod;
   }
@@ -77,16 +78,16 @@ void setVariables2() {
 
 void setVariables3() {
   rep(a,1,v+1) {
-    int edgesFromA = edgeFrom[a];
+    ll edgesFromA = edgeFrom[a];
     // For 4 Nodes
     if(edgesFromA >= 3) {
       ThreeEdgeUsingFourNodes += (edgesFromA*(edgesFromA-1)*(edgesFromA-2))/6;
     }
     // Dependency on connected nodes b and c
     rep(i,0,edgesFromA) {
-      int b = graph[a][i];
+      ll b = graph[a][i];
       rep(j,i+1,edgesFromA) {
-        int c = graph[a][j];
+        ll c = graph[a][j];
         // For 3 Nodes
         if(graphDict.find(mp(b,c)) != graphDict.end()) {
           ThreeEdgeUsingThreeNodes += 1;
@@ -94,6 +95,7 @@ void setVariables3() {
         }
         // For 5 Nodes
         ThreeEdgeUsingFiveNodes += e-edgeFrom[a]-edgeFrom[b]-edgeFrom[c]+2;
+        ThreeEdgeUsingFiveNodes %= mod;
       }
     }
   }
@@ -101,11 +103,11 @@ void setVariables3() {
   // For 4 Nodes Straight Lines
   ll temp = 0;
   rep(a,1,v+1) {
-    int edgesFromA = edgeFrom[a];
+    ll edgesFromA = edgeFrom[a];
     rep(i,0,edgesFromA) {
-      int b = graph[a][i];
+      ll b = graph[a][i];
       rep(j,0,edgeFrom[b]) {
-        int c = graph[b][j];
+        ll c = graph[b][j];
         if(c == a) {
           continue;
         }
@@ -117,7 +119,8 @@ void setVariables3() {
     }
   }
   ThreeEdgeUsingFourNodes += temp/2;
-  ThreeEdgeUsingSixNodes = ((e*(e-1)*(e-2))/6) - (ThreeEdgeUsingThreeNodes+ThreeEdgeUsingFourNodes+ThreeEdgeUsingFiveNodes);
+  ThreeEdgeUsingFourNodes %= mod;
+  ThreeEdgeUsingSixNodes = (((e*(e-1)*(e-2))/6)%mod - (ThreeEdgeUsingThreeNodes+ThreeEdgeUsingFourNodes+ThreeEdgeUsingFiveNodes)%mod)%mod;
   // printf("%lld %lld %lld %lld\n", ThreeEdgeUsingThreeNodes,ThreeEdgeUsingFourNodes,ThreeEdgeUsingFiveNodes,ThreeEdgeUsingSixNodes);
   if(v>=3) ThreeEdgeUsingThreeNodesAns = (6*(powTwo[v-3]*ThreeEdgeUsingThreeNodes)%mod)%mod;
   if(v>=4) ThreeEdgeUsingFourNodesAns = (6*(powTwo[v-4]*ThreeEdgeUsingFourNodes)%mod)%mod;
@@ -130,14 +133,14 @@ int main() {
   rep(i,1,100005) {
     powTwo[i] = (powTwo[i-1]*2)%mod;
   }
-  int t;
-  scanf("%d\n", &t);
+  ll t;
+  scanf("%lld\n", &t);
   rep(_,0,t) {
-    resetVaribles();
-    scanf("%d %d %d\n",&v,&e,&k);
+    scanf("%lld %lld %lld\n",&v,&e,&k);
+    resetVaribles(v);
     rep(__,0,e) {
-      int a,b;
-      scanf("%d %d\n",&a,&b);
+      ll a,b;
+      scanf("%lld %lld\n",&a,&b);
       graph[a].pb(b);
       graph[b].pb(a);
       edgeFrom[a] += 1;
@@ -169,9 +172,9 @@ int main() {
         setVariables1();
         setVariables2();
         setVariables3();
-        // printf("%lld %lld %lld %lld %lld %lld %lld\n",OneEdgeUsingTwoNodesAns,TwoEdgeUsingThreeNodesAns,TwoEdgeUsingFourNodesAns,ThreeEdgeUsingThreeNodesAns,ThreeEdgeUsingFourNodesAns,ThreeEdgeUsingFiveNodesAns,ThreeEdgeUsingSixNodesAns);
         TwoEdgeUsingThreeNodesAns = (6*TwoEdgeUsingThreeNodesAns)%mod;
         TwoEdgeUsingFourNodesAns = (6*TwoEdgeUsingFourNodesAns)%mod;
+        // printf("%lld %lld %lld %lld %lld %lld %lld\n",OneEdgeUsingTwoNodesAns,TwoEdgeUsingThreeNodesAns,TwoEdgeUsingFourNodesAns,ThreeEdgeUsingThreeNodesAns,ThreeEdgeUsingFourNodesAns,ThreeEdgeUsingFiveNodesAns,ThreeEdgeUsingSixNodesAns);
         ll finalAns = (OneEdgeUsingTwoNodesAns+TwoEdgeUsingThreeNodesAns+TwoEdgeUsingFourNodesAns+ThreeEdgeUsingThreeNodesAns+ThreeEdgeUsingFourNodesAns+ThreeEdgeUsingFiveNodesAns+ThreeEdgeUsingSixNodesAns)%mod;
         printf("%lld\n", finalAns);
       }

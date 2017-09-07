@@ -11,7 +11,7 @@ def setVariables1():
     global OneEdgeUsingTwoNodes
     global OneEdgeUsingTwoNodesAns
     OneEdgeUsingTwoNodes = e
-    OneEdgeUsingTwoNodesAns = powTwo[v-2]*OneEdgeUsingTwoNodes
+    OneEdgeUsingTwoNodesAns = (powTwo[v-2]*OneEdgeUsingTwoNodes)%mod
 
 def setVariables2():
     global TwoEdgeUsingThreeNodes,TwoEdgeUsingFourNodes
@@ -20,7 +20,7 @@ def setVariables2():
         if(i>=2):
             TwoEdgeUsingThreeNodes += (i*(i-1))/2
     TwoEdgeUsingThreeNodesAns = powTwo[v-3]*TwoEdgeUsingThreeNodes
-    if e>=4:
+    if v>=4:
         TwoEdgeUsingFourNodes = (e*(e-1))/2 - TwoEdgeUsingThreeNodes
         TwoEdgeUsingFourNodesAns = powTwo[v-4]*TwoEdgeUsingFourNodes
 
@@ -43,6 +43,7 @@ def setVariables3():
                     ThreeEdgeUsingFiveNodes += 1    # Because of connection between b&c
                 # For 5 Nodes
                 ThreeEdgeUsingFiveNodes += e-edgeFrom[a]-edgeFrom[b]-edgeFrom[c]+2
+                ThreeEdgeUsingFiveNodes %= mod
     ThreeEdgeUsingThreeNodes /= 3
     # For 4 Nodes Straight Lines
     temp = 0
@@ -58,8 +59,9 @@ def setVariables3():
                 if (a,c) in graphDict:
                     temp -= 1
     ThreeEdgeUsingFourNodes += temp/2
-    ThreeEdgeUsingSixNodes = (e*(e-1)*(e-2))/6 - (ThreeEdgeUsingThreeNodes+ThreeEdgeUsingFourNodes+ThreeEdgeUsingFiveNodes)
-    print ThreeEdgeUsingThreeNodes,ThreeEdgeUsingFourNodes,ThreeEdgeUsingFiveNodes,ThreeEdgeUsingSixNodes
+    ThreeEdgeUsingFourNodes %= mod
+    ThreeEdgeUsingSixNodes = (((e*(e-1)*(e-2))/6)%mod - (ThreeEdgeUsingThreeNodes+ThreeEdgeUsingFourNodes+ThreeEdgeUsingFiveNodes)%mod)%mod
+    # print ThreeEdgeUsingThreeNodes,ThreeEdgeUsingFourNodes,ThreeEdgeUsingFiveNodes,ThreeEdgeUsingSixNodes
     if v>=3:
         ThreeEdgeUsingThreeNodesAns = (6*powTwo[v-3]*ThreeEdgeUsingThreeNodes)%mod
     if v>=4:
