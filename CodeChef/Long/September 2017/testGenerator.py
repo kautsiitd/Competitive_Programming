@@ -1,8 +1,8 @@
 import random
-t = 3
+t = 10
 print t
 for _ in range(t):
-    n,m,k = 5000,10000,3
+    n,m,k = 50000,100000,3
     print n,m,k
     dict = {(1,2):True}
     print 1,2
@@ -13,7 +13,7 @@ for _ in range(t):
         print i,i-1
     for i in range(2*n-2,m+1):
         a,b = random.randint(1,n),random.randint(1,n)
-        while(a==b or (a,b) in dict):
+        while(a==b or (a,b) in dict or (b,a) in dict):
             a,b = random.randint(1,n),random.randint(1,n)
         dict[(a,b)] = True
         dict[(b,a)] = True

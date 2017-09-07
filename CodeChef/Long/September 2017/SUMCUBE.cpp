@@ -77,23 +77,41 @@ void setVariables2() {
   }
 }
 
-void setVariables3() {
-  ll count1 = 0;
-  // For 3 Nodes
-  rep(a,1,v+1) {
+bool compareForSort(pair<ll,ll> i1, pair<ll,ll> i2) {
+    return (i1.second < i2.second);
+}
+
+void solveForTriangles() {
+  pair<ll,ll> vAndE[v];
+  rep(i,1,v+1) {
+    vAndE[i-1] = mp(i,edgeFrom[i]);
+  }
+  sort(vAndE,vAndE+v,compareForSort);
+  bool isNodePresent[v+1];
+  rep(i,0,v+1) {
+    isNodePresent[i] = true;
+  }
+  for(auto z: vAndE) {
+    ll a = z.first;
     ll edgesFromA = edgeFrom[a];
-    // Dependency on connected nodes b and c
     rep(i,0,edgesFromA) {
       ll b = graph[a][i];
-      rep(j,i+1,edgesFromA) {
-        ll c = graph[a][j];
-        if(graphDict[b].find(c) != graphDict[b].end()) {
-          ThreeEdgeUsingThreeNodes += 1;
+      if(isNodePresent[b]) {
+        rep(j,i+1,edgesFromA) {
+          ll c = graph[a][j];
+          if(isNodePresent[c] && graphDict[b].find(c) != graphDict[b].end()) {
+            ThreeEdgeUsingThreeNodes += 1;
+          }
         }
       }
     }
+    isNodePresent[a] = false;
   }
-  ThreeEdgeUsingThreeNodes /= 3;
+}
+
+void setVariables3() {
+  // For 3 Nodes
+  solveForTriangles();
   // For 4 Nodes
   ll temp1=0,temp2 = 0;
   ll count2 = 0;
@@ -101,6 +119,7 @@ void setVariables3() {
     ll edgesFromA = edgeFrom[a];
     if(edgesFromA >= 3) {
       temp1 += (edgesFromA*(edgesFromA-1)*(edgesFromA-2))/6;
+      temp1 %= mod;
     }
     rep(i,0,edgesFromA) {
       ll b = graph[a][i];
@@ -114,18 +133,20 @@ void setVariables3() {
   // For 5 Nodes
   rep(a,1,v+1) {
     ll twoLevelEdge = twoLevelEdgeFrom[a];
-    ThreeEdgeUsingFiveNodes += twoLevelEdge%mod;
-    ThreeEdgeUsingFiveNodes %= mod;
+    ThreeEdgeUsingFiveNodes += twoLevelEdge;
   }
   ThreeEdgeUsingFiveNodes /= 2;
   ThreeEdgeUsingFiveNodes *= (e-2);
   ThreeEdgeUsingFiveNodes -= 3*temp1;
   ThreeEdgeUsingFiveNodes -= 2*temp2;
   ThreeEdgeUsingFiveNodes -= 3*ThreeEdgeUsingThreeNodes;
+  ThreeEdgeUsingFiveNodes += mod;
   ThreeEdgeUsingFiveNodes %= mod;
-
-  ThreeEdgeUsingSixNodes = (((e*(e-1)*(e-2))/6)%mod - (ThreeEdgeUsingThreeNodes+ThreeEdgeUsingFourNodes+ThreeEdgeUsingFiveNodes)%mod)%mod;
+  // For 6 Nodes
+  // printf("%lld %lld\n", ((e*(e-1)*(e-2))/6)%mod, (ThreeEdgeUsingThreeNodes+ThreeEdgeUsingFourNodes+ThreeEdgeUsingFiveNodes)%mod);
+  ThreeEdgeUsingSixNodes = ((((e*(e-1)*(e-2))/6)%mod) - ((ThreeEdgeUsingThreeNodes+ThreeEdgeUsingFourNodes+ThreeEdgeUsingFiveNodes)%mod) + mod)%mod;
   // printf("%lld %lld %lld %lld\n", ThreeEdgeUsingThreeNodes,ThreeEdgeUsingFourNodes,ThreeEdgeUsingFiveNodes,ThreeEdgeUsingSixNodes);
+  // Calculating answers
   if(v>=3) ThreeEdgeUsingThreeNodesAns = (6*(powTwo[v-3]*ThreeEdgeUsingThreeNodes)%mod)%mod;
   if(v>=4) ThreeEdgeUsingFourNodesAns = (6*(powTwo[v-4]*ThreeEdgeUsingFourNodes)%mod)%mod;
   if(v>=5) ThreeEdgeUsingFiveNodesAns = (6*(powTwo[v-5]*ThreeEdgeUsingFiveNodes)%mod)%mod;
