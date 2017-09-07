@@ -10,7 +10,8 @@ using namespace std;
 ll powTwo[100005];
 vector< vector<ll> > graph(100005);
 ll edgeFrom[100005];
-map<pair<ll,ll>,bool> graphDict;
+ll twoLevelEdgeFrom[100005];
+unordered_map<ll,bool> graphDict[100005];
 ll v,e,k;
 
 // Variables
@@ -41,8 +42,8 @@ void resetVaribles(ll v) {
   rep(i,0,v+5) {
     graph[i] = vector<ll>();
     edgeFrom[i] = 0;
+    graphDict[i] = unordered_map<ll,bool>();
   }
-  graphDict = map<pair<ll,ll>,bool>();
   OneEdgeUsingTwoNodes = 0;
   TwoEdgeUsingThreeNodes = 0;
   TwoEdgeUsingThreeNodesAns = 0;
@@ -77,49 +78,52 @@ void setVariables2() {
 }
 
 void setVariables3() {
+  ll count1 = 0;
+  // For 3 Nodes
   rep(a,1,v+1) {
     ll edgesFromA = edgeFrom[a];
-    // For 4 Nodes
-    if(edgesFromA >= 3) {
-      ThreeEdgeUsingFourNodes += (edgesFromA*(edgesFromA-1)*(edgesFromA-2))/6;
-    }
     // Dependency on connected nodes b and c
     rep(i,0,edgesFromA) {
       ll b = graph[a][i];
       rep(j,i+1,edgesFromA) {
         ll c = graph[a][j];
-        // For 3 Nodes
-        if(graphDict.find(mp(b,c)) != graphDict.end()) {
+        if(graphDict[b].find(c) != graphDict[b].end()) {
           ThreeEdgeUsingThreeNodes += 1;
-          ThreeEdgeUsingFiveNodes += 1;    // Because of connection between b&c
         }
-        // For 5 Nodes
-        ThreeEdgeUsingFiveNodes += e-edgeFrom[a]-edgeFrom[b]-edgeFrom[c]+2;
-        ThreeEdgeUsingFiveNodes %= mod;
       }
     }
   }
   ThreeEdgeUsingThreeNodes /= 3;
-  // For 4 Nodes Straight Lines
-  ll temp = 0;
+  // For 4 Nodes
+  ll temp1=0,temp2 = 0;
+  ll count2 = 0;
   rep(a,1,v+1) {
     ll edgesFromA = edgeFrom[a];
+    if(edgesFromA >= 3) {
+      temp1 += (edgesFromA*(edgesFromA-1)*(edgesFromA-2))/6;
+    }
     rep(i,0,edgesFromA) {
       ll b = graph[a][i];
-      rep(j,0,edgeFrom[b]) {
-        ll c = graph[b][j];
-        if(c == a) {
-          continue;
-        }
-        temp += edgeFrom[c]-1;
-        if(graphDict.find(mp(a,c)) != graphDict.end()) {
-          temp -= 1;
-        }
-      }
+      temp2 += twoLevelEdgeFrom[b]-edgesFromA+1;
     }
   }
-  ThreeEdgeUsingFourNodes += temp/2;
+  temp2 >>= 1;
+  temp2 -= 3*ThreeEdgeUsingThreeNodes; // Because of connection between b&c
+  ThreeEdgeUsingFourNodes = temp1 + temp2;
   ThreeEdgeUsingFourNodes %= mod;
+  // For 5 Nodes
+  rep(a,1,v+1) {
+    ll twoLevelEdge = twoLevelEdgeFrom[a];
+    ThreeEdgeUsingFiveNodes += twoLevelEdge%mod;
+    ThreeEdgeUsingFiveNodes %= mod;
+  }
+  ThreeEdgeUsingFiveNodes /= 2;
+  ThreeEdgeUsingFiveNodes *= (e-2);
+  ThreeEdgeUsingFiveNodes -= 3*temp1;
+  ThreeEdgeUsingFiveNodes -= 2*temp2;
+  ThreeEdgeUsingFiveNodes -= 3*ThreeEdgeUsingThreeNodes;
+  ThreeEdgeUsingFiveNodes %= mod;
+
   ThreeEdgeUsingSixNodes = (((e*(e-1)*(e-2))/6)%mod - (ThreeEdgeUsingThreeNodes+ThreeEdgeUsingFourNodes+ThreeEdgeUsingFiveNodes)%mod)%mod;
   // printf("%lld %lld %lld %lld\n", ThreeEdgeUsingThreeNodes,ThreeEdgeUsingFourNodes,ThreeEdgeUsingFiveNodes,ThreeEdgeUsingSixNodes);
   if(v>=3) ThreeEdgeUsingThreeNodesAns = (6*(powTwo[v-3]*ThreeEdgeUsingThreeNodes)%mod)%mod;
@@ -145,8 +149,18 @@ int main() {
       graph[b].pb(a);
       edgeFrom[a] += 1;
       edgeFrom[b] += 1;
-      graphDict[mp(a,b)] = true;
-      graphDict[mp(b,a)] = true;
+      graphDict[a][b] = true;
+      graphDict[b][a] = true;
+    }
+
+    rep(a,1,v+1) {
+      ll edgesFromA = edgeFrom[a];
+      ll temp = 0;
+      rep(i,0,edgesFromA) {
+        ll b = graph[a][i];
+        temp += edgeFrom[b]-1;
+      }
+      twoLevelEdgeFrom[a] = temp;
     }
 
     if(v==1 || e==0) {
