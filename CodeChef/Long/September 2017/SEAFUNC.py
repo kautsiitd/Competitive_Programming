@@ -12,7 +12,7 @@ def findCurves(a,b,c):
             j = f(a,b,c,d,i)
             if j>=1 and j<=n and arr[i-1][j-1] == 1:
                 l = i
-                pointCount = 1
+                pointCount = 0
                 while i<=n and j>=1 and j<=n:
                     if arr[i-1][j-1] == 1:
                         i+=1
