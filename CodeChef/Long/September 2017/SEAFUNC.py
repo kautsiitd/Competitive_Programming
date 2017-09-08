@@ -61,7 +61,7 @@ def improveTempAns():
     diff = 0
     i = 0
     for ansElement in tempans:
-        if diff + ansWeight(ansElement) + 1 <= 100:
+        if diff + ansWeight(ansElement) + 1 <= 0:
             diff += ansWeight(ansElement)+1
             i += 1
         else:
@@ -79,11 +79,27 @@ def resetTempAns():
             if originalArr[i-1][j-1] == 1:
                 tempans.append([0,1,0,1,0,1,j,i,i])
 
+primeNumbers = [-7,-5,-3,-2,-1,0,1,2,3,5,7]
+numberOfPrimeNumbers = len(primeNumbers)
+
 for _ in range(input()):
     n = input()
     originalArr = [[int(i) for i in raw_input()] for _ in range(n)]
     q = 10005
     ans = []
+
+    numberOfIterations = 5
+    depthOfIteration = 3
+    for iterations in range(numberOfIterations):
+        arr = originalArr
+        resetTempAns()
+        for ithFunc in range(depthOfIteration):
+            a = primeNumbers[random.randint(0,numberOfPrimeNumbers-1)]
+            b = primeNumbers[random.randint(0,numberOfPrimeNumbers-1)]
+            c = primeNumbers[random.randint(0,numberOfPrimeNumbers-1)]
+            reputSinglePoints(a,b,c)
+            findCurves(a,b,c)
+        improveTempAns()
 
     orderFrom = -1
     orderTill = 1
@@ -94,12 +110,6 @@ for _ in range(input()):
         resetTempAns()
         for i in order:
             reputSinglePoints(0,0,i)
-            findCurves(0,0,i)
-        for i in range(1):
-            a = random.randint(-1,1)
-            b = random.randint(-1,1)
-            c = random.randint(-1,1)
-            reputSinglePoints(a,b,c)
             findCurves(0,0,i)
         improveTempAns()
 
