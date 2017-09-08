@@ -1,3 +1,5 @@
+from itertools import permutations
+
 def ansWeight(a):
     return a[-1]-a[-2]
 
@@ -49,6 +51,7 @@ def reputSinglePoints(newA,newB,newC):
         tempans.remove(i)
     # for i in arr:
     #     print i
+    # print ""
 
 # Formatting ans, creating diff at most 100 worst points
 def improveTempAns():
@@ -57,7 +60,7 @@ def improveTempAns():
     diff = 0
     i = 0
     for ansElement in tempans:
-        if diff + ansWeight(ansElement) + 1 <= 0:
+        if diff + ansWeight(ansElement) + 1 <= 100:
             diff += ansWeight(ansElement)+1
             i += 1
         else:
@@ -69,18 +72,24 @@ def improveTempAns():
 
 for _ in range(input()):
     n = input()
-    arr = [[int(i) for i in raw_input()] for _ in range(n)]
-    originalArr = [[arr[i][j] for j in range(n)] for i in range(n)]
+    originalArr = [[int(i) for i in raw_input()] for _ in range(n)]
     q = 10005
     ans = []
-    tempans = []
 
-    findCurves(0,0,0)
-    reputSinglePoints(0,0,1)
-    findCurves(0,0,1)
-    reputSinglePoints(0,0,-1)
-    findCurves(0,0,-1)
-    improveTempAns()
+    orderFrom = -1
+    orderTill = 1
+    orders = permutations(range(orderFrom,orderTill+1),(orderTill-orderFrom+1))
+
+    for order in orders:
+        arr = originalArr
+        tempans = []
+        if(order[0] == -1): # because -1 is not covering whole matrix resulting leaving out other part's 1
+            continue
+        findCurves(0,0,order[0])
+        for i in order[1:]:
+            reputSinglePoints(0,0,i)
+            findCurves(0,0,i)
+        improveTempAns()
 
     # printing ans
     print len(ans)
