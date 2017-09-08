@@ -1,4 +1,5 @@
 from itertools import permutations
+import random
 
 def ansWeight(a):
     return a[-1]-a[-2]
@@ -93,6 +94,12 @@ for _ in range(input()):
         resetTempAns()
         for i in order:
             reputSinglePoints(0,0,i)
+            findCurves(0,0,i)
+        for i in range(1):
+            a = random.randint(-1,1)
+            b = random.randint(-1,1)
+            c = random.randint(-1,1)
+            reputSinglePoints(a,b,c)
             findCurves(0,0,i)
         improveTempAns()
 
