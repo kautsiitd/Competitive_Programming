@@ -27,7 +27,7 @@ def findCurves(a,b,c):
                 if pointCount > 1:
                     r = i-1
                 else:
-                    r = i
+                    r = l
                 tempans.append((a,1,b,1,c,1,d,l,r))
             else:
                 i+=1
