@@ -70,6 +70,14 @@ def improveTempAns():
         ans = tempans
         q = len(ans)
 
+def resetTempAns():
+    global tempans
+    tempans = []
+    for i in range(1,n+1):
+        for j in range(1,n+1):
+            if originalArr[i-1][j-1] == 1:
+                tempans.append([0,1,0,1,0,1,j,i,i])
+
 for _ in range(input()):
     n = input()
     originalArr = [[int(i) for i in raw_input()] for _ in range(n)]
@@ -82,11 +90,8 @@ for _ in range(input()):
 
     for order in orders:
         arr = originalArr
-        tempans = []
-        if(order[0] == -1): # because -1 is not covering whole matrix resulting leaving out other part's 1
-            continue
-        findCurves(0,0,order[0])
-        for i in order[1:]:
+        resetTempAns()
+        for i in order:
             reputSinglePoints(0,0,i)
             findCurves(0,0,i)
         improveTempAns()
