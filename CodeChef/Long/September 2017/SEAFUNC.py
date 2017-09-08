@@ -12,10 +12,22 @@ def findCurves(a,b,c):
             j = f(a,b,c,d,i)
             if j>=1 and j<=n and arr[i-1][j-1] == 1:
                 l = i
-                while i<=n and j>=1 and j<=n and arr[i-1][j-1] == 1:
-                    i+=1
-                    j = f(a,b,c,d,i)
-                r = i-1
+                pointCount = 1
+                while i<=n and j>=1 and j<=n:
+                    if arr[i-1][j-1] == 1:
+                        i+=1
+                        j = f(a,b,c,d,i)
+                        pointCount += 1
+                    else:
+                        if originalArr[i-1][j-1] == 1 and l < i:
+                            i+=1
+                            j = f(a,b,c,d,i)
+                        else:
+                            break
+                if pointCount > 1:
+                    r = i-1
+                else:
+                    r = i
                 tempans.append((a,1,b,1,c,1,d,l,r))
             else:
                 i+=1
@@ -27,7 +39,7 @@ def improveTempAns():
     diff = 0
     i = 0
     for ansElement in tempans:
-        if diff + ansWeight(ansElement) + 1 <= 0:
+        if diff + ansWeight(ansElement) + 1 <= 100:
             diff += ansWeight(ansElement)+1
             i += 1
         else:
