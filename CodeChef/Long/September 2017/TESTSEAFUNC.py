@@ -1,14 +1,17 @@
 import sys
-def f(i):
-    return -i+offset
-n = 5
-a = [[0 for j in range(n)] for i in range(n)]
-b = [(5,1,4)]
-for offset,l,r in b:
-    for i in range(l-1,r):
-        if f(i) < n and f(i) >= 0:
-            a[i][f(i)] = 1
-for i in a:
+def f(a,b,c,d,x):
+    return a*x*x*x + b*x*x + c*x + d
+n = 40
+arr = [[0 for j in range(n)] for i in range(n)]
+a,b,c,d = 0,0,0,0
+for a in range(0,1):
+    for b in range(1,2):
+        for c in range(-n-1,0):
+            for d in range(0,1):
+                for x in range(1,n+1):
+                    if f(a,b,c,d,x)<=n and f(a,b,c,d,x) > 0:
+                        arr[x-1][f(a,b,c,d,x)-1] = 1
+for i in arr:
     for j in i:
         print j,
     print ""
