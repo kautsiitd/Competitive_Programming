@@ -41,12 +41,14 @@ def reputSinglePoints(newA,newB,newC):
         if ithAns[-1]-ithAns[-2] == 0:
             a,b,c,d,x = ithAns[0],ithAns[2],ithAns[4],ithAns[6],ithAns[7]
             y = f(a,b,c,d,x)
-            newD = y - (a*x*x*x + b*x*x + c*x)
-            if(newD <= n and newD >= -n):
+            newD = y - (newA*x*x*x + newB*x*x + newC*x)
+            if(newD >= -n and newD <= n):
                 arr[x-1][y-1] = 1
                 deleteThese.append(ithAns)
     for i in deleteThese:
         tempans.remove(i)
+    # for i in arr:
+    #     print i
 
 # Formatting ans, creating diff at most 100 worst points
 def improveTempAns():
