@@ -61,7 +61,7 @@ def improveTempAns():
     diff = 0
     i = 0
     for ansElement in tempans:
-        if diff + ansWeight(ansElement) + 1 <= 0:
+        if diff + ansWeight(ansElement) + 1 <= 100:
             diff += ansWeight(ansElement)+1
             i += 1
         else:
@@ -88,19 +88,21 @@ for _ in range(input()):
     q = 10005
     ans = []
 
-    numberOfIterations = 5
-    depthOfIteration = 3
-    for iterations in range(numberOfIterations):
-        arr = originalArr
-        resetTempAns()
-        for ithFunc in range(depthOfIteration):
-            a = primeNumbers[random.randint(0,numberOfPrimeNumbers-1)]
-            b = primeNumbers[random.randint(0,numberOfPrimeNumbers-1)]
-            c = primeNumbers[random.randint(0,numberOfPrimeNumbers-1)]
-            reputSinglePoints(a,b,c)
-            findCurves(a,b,c)
-        improveTempAns()
+    # Choosing functions randomly
+    # numberOfIterations = 2
+    # depthOfIteration = 2
+    # for iterations in range(numberOfIterations):
+    #     arr = originalArr
+    #     resetTempAns()
+    #     for ithFunc in range(depthOfIteration):
+    #         a = primeNumbers[random.randint(0,numberOfPrimeNumbers-1)]
+    #         b = primeNumbers[random.randint(0,numberOfPrimeNumbers-1)]
+    #         c = primeNumbers[random.randint(0,numberOfPrimeNumbers-1)]
+    #         reputSinglePoints(a,b,c)
+    #         findCurves(a,b,c)
+    #     improveTempAns()
 
+    # Choosing linear function in every order
     orderFrom = -1
     orderTill = 1
     orders = permutations(range(orderFrom,orderTill+1),(orderTill-orderFrom+1))
@@ -111,6 +113,14 @@ for _ in range(input()):
         for i in order:
             reputSinglePoints(0,0,i)
             findCurves(0,0,i)
+        reputSinglePoints(0,0,2)
+        findCurves(0,0,2)
+        reputSinglePoints(0,0,3)
+        findCurves(0,0,3)
+        reputSinglePoints(0,0,5)
+        findCurves(0,0,5)
+        reputSinglePoints(0,0,7)
+        findCurves(0,0,7)
         improveTempAns()
 
     # printing ans
