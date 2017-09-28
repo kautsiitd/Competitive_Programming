@@ -21,5 +21,4 @@ for qc in Q:
             minPriceAtPos.append(-1)
         else:
             minPriceAtPos.append(min(temp))
-        print minPriceAtPos
     print minPriceAtPos[n-1]
